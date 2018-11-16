@@ -30,6 +30,14 @@
    7. 机构投资人可向融资合约地址转账ETH，注意不要超过约定额度 避免超过总投资额度限制
    8. 机构投资完成后融资合约拥有者可以开始进行团队奖励发放
    9. 投资人和团队成员可根据时间到期解锁FST，总共有8次，也可以等待10分钟完成一次性提取
+* 测试方法采用浏览器打开etherscan 和 metamask
+   1. 利用metamask向融资合约地址转账ETH，等待交易完成
+   2. 打开锁仓合约地址：https://ropsten.etherscan.io/address/0xb03f0a9156544a83b3dedd532f71cc777d4f5d38
+   3. 进入Read Contract选项卡 在 holderList 位置输入自己的钱包地址查询锁仓额度
+   4. 当时间到达75秒或达到75秒的倍数时可以切换到Write Contract选项卡，在 releaseMyTokens或者releaseTokens位置解锁FST额度
+   5. 解锁完成后打开FSTToken合约地址：https://ropsten.etherscan.io/address/0x93842259b30ea9a84eefcd8819ae154c753abe03
+   6. 进入Read Contract选项卡 在 balanceOf 位置处 输入自己的钱包地址查询FST额度
+   
 * 注意： 非正常测试步骤的测试，可以等到完成后进行审查。
 
 
