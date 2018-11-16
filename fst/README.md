@@ -37,7 +37,18 @@
    4. 当时间到达75秒或达到75秒的倍数时可以切换到Write Contract选项卡，在 releaseMyTokens或者releaseTokens位置解锁FST额度
    5. 解锁完成后打开FSTToken合约地址：https://ropsten.etherscan.io/address/0x93842259b30ea9a84eefcd8819ae154c753abe03
    6. 进入Read Contract选项卡 在 balanceOf 位置处 输入自己的钱包地址查询FST额度
-   
+* 测试分配数据
+```   
+Kevin: 投资 2 ETH，获得团队奖励2000, 最后获得总额4000
+
+Jack :   投资 1.3 ETH，获得团队奖励1500, 最后获得总额2800
+
+Stefans :投资 1.5 ETH，获得团队奖励2100, 最后获得总额3600
+
+pu.li: 投资 2.7 ETH，获得团队奖励340, 最后获得总额3040
+
+数量汇总： 融资ETH总额7.5, 投资产生FST额度7500，团队奖励产生FST额度5940，测试完成产生的FST总额为13440
+```
 * 注意： 非正常测试步骤的测试，可以等到完成后进行审查。
 
 
