@@ -61,6 +61,8 @@ contract FSTTokenHolder is Ownable{
 
     function releaseTokens(address _adr) public{
         require(_adr!=address(0));
+        //todo add holderList lockAmount check
+        require(holderList[_adr].lockAmount>0);
         uint256 unlockAmount=lockStrategy(_adr);
         require(unlockAmount>0);
 //        if(unlockAmount>0){

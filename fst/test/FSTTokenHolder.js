@@ -28,6 +28,16 @@ contract('FSTTokenHolder', function(accounts) {
             });
         });
     })
+
+    /**
+     * todo FSTTokenHolder releaseMyTokens
+     */
+    // it("should releaseMyTokens is correctly",function () {
+    //     return FSTTokenHolder.deployed().then(function (instance) {
+    //         fSTTokenHolder=instance;
+    //         return fSTTokenHolder.releaseMyTokens({from:owner});
+    //     })
+    // });
     /**
      * todo FSTTokenHolder releaseTokens
      */
