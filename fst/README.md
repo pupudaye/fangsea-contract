@@ -4,9 +4,9 @@
 
 |     Contract  |               Address                     |                Desc                     |  
 |:-----------   |:------------------------------------------|:----------------------------------------| 
-| FSTToken      | 0x93842259b30ea9a84eefcd8819ae154c753abe03| FST Token 是流通货币 |
-| FSTTokenHolder| 0xb03f0a9156544a83b3dedd532f71cc777d4f5d38| 持有人锁仓合约   |
-| FSTTokenIssue | 0x72f8f65cc4a3f037a212a7fb8c612c345b64637d| 融资合约    |
+| FSTToken      | 0xc6fcbc8a6bf2fd4430caad6f19053c08e2b0532f| FST Token 是流通货币 |
+| FSTTokenHolder| 0xd6d82dcfa792f2a429b71c1e11848439b433618c| 持有人锁仓合约   |
+| FSTTokenIssue | 0xb836e3e6b268dfa5ece67603ac72f18b6ca45445| 融资合约    |
 
 * 主链链合约地址
 
@@ -37,18 +37,6 @@
    4. 当时间到达75秒或达到75秒的倍数时可以切换到Write Contract选项卡，在 releaseMyTokens或者releaseTokens位置解锁FST额度
    5. 解锁完成后打开FSTToken合约地址：https://ropsten.etherscan.io/address/0x93842259b30ea9a84eefcd8819ae154c753abe03
    6. 进入Read Contract选项卡 在 balanceOf 位置处 输入自己的钱包地址查询FST额度
-* 测试分配数据
-```   
-Kevin: 投资 2 ETH，获得团队奖励2000, 最后获得总额4000
-
-Jack :   投资 1.3 ETH，获得团队奖励1500, 最后获得总额2800
-
-Stefans :投资 1.5 ETH，获得团队奖励2100, 最后获得总额3600
-
-pu.li: 投资 2.7 ETH，获得团队奖励340, 最后获得总额3040
-
-数量汇总： 融资ETH总额7.5, 投资产生FST额度7500，团队奖励产生FST额度5940，测试完成产生的FST总额为13440
-```
 * 注意： 非正常测试步骤的测试，可以等到完成后进行审查。
 
 
@@ -118,3 +106,8 @@ truffle.cmd migrate --network main
 
 # QA/FAQ
 * 发布测试链或主链如何发布源码检查?
+```
+解决：取消合约依赖import 合并合约代码带一个文件
+```
+* 合约发布后出现异常如何实现数据转移和逻辑升级?
+

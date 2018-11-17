@@ -51,8 +51,8 @@ contract('FSTTokenIssue', function(accounts) {
               return fstToken.balanceOf.call(FSTTokenHolder.address);
           }).then(function (balance) {
               var amount=eth/price;
-              assert.equal(lockAmount, amount, "buy Token fail,balance is not "+amount);
-              assert.equal(lockAmount, balance.toNumber(), "buy Token fail,lock and balance is not equal!");
+              assert.equal(web3.fromWei(lockAmount,'ether'), amount, "buy Token fail,balance is not "+lockAmount);
+              assert.equal(lockAmount, balance.toNumber(), "buy Token fail,lock and balance is not equal!,"+balance);
           });
       });
 
@@ -66,19 +66,19 @@ contract('FSTTokenIssue', function(accounts) {
             fstIssue=instance;
             return fstIssue.setTWhitelist(whiteAccounts,TWhiteAccountBonus,{from: owner});
         }).then(function () {
-            return fstIssue.TWhitelist.call(0);
-        }).then(function (TWhiteItem) {
-            assert.equal(TWhiteItem[1], TWhiteAccountBonus[0], "set Team Holder Token value is not equal");
+            return fstIssue.TWhitelist.call(whiteAccounts[0]);
+        }).then(function (TWhiteItemValue0) {
+            assert.equal(web3.fromWei(TWhiteItemValue0,'ether'), TWhiteAccountBonus[0], "set Team Holder Token value is not equal,"+TWhiteItemValue0);
             return fstIssue.removeTWhitelist(whiteAccounts[1],{from: owner});
         }).then(function () {
-            return fstIssue.TWhitelist.call(1);
-        }).then(function (TWhiteItem) {
-            assert.equal(TWhiteItem[1], 0, "remove Team Holder Token  is fail");
-            return fstIssue.provideTeamHolderToken({from: owner});
-        }).then(function () {
+            return fstIssue.TWhitelist.call(whiteAccounts[1]);
+        }).then(function (TWhiteItemValue1) {
+            assert.equal(web3.fromWei(TWhiteItemValue1,'ether'), 0, "remove Team Holder Token  is fail,"+TWhiteItemValue1);
+            return fstIssue.provideTeamHolderToken(whiteAccounts[0],{from: owner});
+        }) .then(function () {
             return fSTTokenHolder.holderList.call(whiteAccounts[0]);
         }).then(function (holderSchedule) {
-            assert.equal(holderSchedule[1], TWhiteAccountBonus[0], "provide Team Holder Token value is not equal "+holderSchedule[1]);
+            assert.equal(web3.fromWei(holderSchedule[1],'ether'), TWhiteAccountBonus[0]+1000, "provide Team Holder Token value is not equal "+holderSchedule[1]);
         });
     });
     /**

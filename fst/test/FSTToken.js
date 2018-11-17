@@ -19,7 +19,7 @@ contract('FSTToken', function(accounts) {
       return FSTToken.deployed().then(function (instance) {
           return instance.cap.call();
       }).then(function(hasCap) {
-          assert.equal(hasCap, amount, "cap is not equal "+amount);
+          assert.equal(web3.fromWei(hasCap, 'ether'), amount, "cap is not equal "+hasCap);
       });
   });
   it("should mint Token correctly ", function() {

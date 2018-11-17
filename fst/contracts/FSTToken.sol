@@ -7,7 +7,7 @@ contract FSTToken is ERC20Capped,ERC20Detailed {
 
     constructor(string name, string symbol, uint8 decimals,uint256 cap)
     public
-    ERC20Capped(cap)
+    ERC20Capped(cap.mul(uint(10) **decimals))
     ERC20Detailed(name,symbol,decimals)
     {
 
