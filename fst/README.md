@@ -26,8 +26,8 @@
 
 ## FSTTokenAgentHolder
 
-    此合约为投资人和团队分配的锁仓合约,因采用现金收款方式进行融资,所以在锁仓名单有管理员来增加和减少;
-    到期主动发起或系统自动解锁到持有人钱包账号
+    此合约为投资人和团队分配的锁仓合约,因采用现金收款方式进行融资,所以锁仓名单由管理员来增加和减少;
+    到期主动发起或系统自动解锁(需求应用系统配合)到持有人钱包账号
     
 |     Function                 |               Desc                        |
 |:------------------------------------------ |:-------------------|
@@ -44,7 +44,7 @@
 ## 准备钱包
 
 1. 创建测试钱包和主链钱包
-2. 分别为连个钱包获取1-2个ETH
+2. 分别为不同钱包获取1-2个ETH
 
 ## 获取合约代码
 
@@ -62,16 +62,17 @@
 6. 切换到RUN选项卡
 ![image](https://raw.githubusercontent.com/pupudaye/fangsea-contract/master/fst/images/2.png)
 7. 在Deploy输入框中输入：
+
+```
+"Fangsea Token","FST",18,1000000000
+```
 说明：
 
 |     名称  |     符号  |     精度  |     数量  |
 |:-----------   |:-----------|:------------|:------------|
 | "Fangsea Token"      | "FST" | 18 | 1000000000|
 
-输入：
-```
-"Fangsea Token","FST",18,1000000000
-```
+
 8. 点击发行工具里面的Deploy按钮 这个时候将会触发Metamask钱包,完成交易即可
 ![image](https://raw.githubusercontent.com/pupudaye/fangsea-contract/master/fst/images/3.png)
 9. 回到发行工具里面获取合约地址,将合约地址保存(切记)
@@ -81,6 +82,7 @@
     主链：https://etherscan.io
     ![image](https://raw.githubusercontent.com/pupudaye/fangsea-contract/master/fst/images/5.png)
 11. 发布合约代码
+
 第一步：
 ![image](https://raw.githubusercontent.com/pupudaye/fangsea-contract/master/fst/images/6.png)
 
@@ -110,17 +112,16 @@
 ![image](https://raw.githubusercontent.com/pupudaye/fangsea-contract/master/fst/images/2.png)
 
 7. 在Deploy输入框中输入：
+
+```
+0x38998915970022d40887a82e5abd65e7d9b48ea4,31536000,4
+```
 说明：
 
 |     FST合约地址  |     锁仓中时长(秒)  |     分几次解仓  |
 |:-----------   |:-----------|:------------|
 | "0x38998915970022d40887a82e5abd65e7d9b48ea4"      | "31536000" | 4 |
 
-输入：
-
-```
-0x38998915970022d40887a82e5abd65e7d9b48ea4,31536000,4
-```
 <label style="color:red">备注：此处的合约地址为发布的FSTToken合约地址</lable>
 
 8. 以下步骤同发布FSTToken合约的8-11步骤
