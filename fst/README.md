@@ -63,14 +63,15 @@
 ![image](https://raw.githubusercontent.com/pupudaye/fangsea-contract/master/fst/images/2.png)
 7. 在Deploy输入框中输入：
 
-```
-"Fangsea Token","FST",18,1000000000
-```
 说明：
 
 |     名称  |     符号  |     精度  |     数量  |
 |:-----------   |:-----------|:------------|:------------|
 | "Fangsea Token"      | "FST" | 18 | 1000000000|
+```
+"Fangsea Token","FST",18,1000000000
+```
+
 
 
 8. 点击发行工具里面的Deploy按钮 这个时候将会触发Metamask钱包,完成交易即可
@@ -113,14 +114,15 @@
 
 7. 在Deploy输入框中输入：
 
-```
-0x38998915970022d40887a82e5abd65e7d9b48ea4,31536000,4
-```
 说明：
 
 |     FST合约地址  |     锁仓中时长(秒)  |     分几次解仓  |
 |:-----------   |:-----------|:------------|
 | "0x38998915970022d40887a82e5abd65e7d9b48ea4"      | "31536000" | 4 |
+```
+0x38998915970022d40887a82e5abd65e7d9b48ea4,31536000,4
+```
+
 
 <label style="color:red">备注：此处的合约地址为发布的FSTToken合约地址</lable>
 
