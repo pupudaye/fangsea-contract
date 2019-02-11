@@ -1,17 +1,15 @@
 pragma solidity ^0.4.24;
 import "./lib/Ownable.sol";
-import "./StandardERC20.sol";
+import "./FSTToken.sol";
 import "./lib/SafeMath.sol";
 
-contract FSTTokenHolder is Ownable{
+contract FSTTokenAgentHolder is Ownable{
 
     using SafeMath for uint256;
 
-    address public tokenAddress;
+    FSTToken private token ;
 
-    uint256 public totalUnLockTokens;
-
-    address public agentAddress;
+    uint256 public totalLockTokens;
 
     uint256 public globalLockPeriod;
 
@@ -19,64 +17,71 @@ contract FSTTokenHolder is Ownable{
     mapping (address => HolderSchedule) public holderList;
     address[] public holderAccountList=[0];
     event ReleaseTokens(address indexed who,uint256 value);
+    event HolderToken(address indexed who,uint256 value,uint256 totalValue);
 
     struct HolderSchedule {
         uint256 startAt;
         uint256 lockAmount;
-        uint256 lockPeriod;
         uint256 releasedAmount;
         uint256 lastUnlocktime;
         bool isReleased;
     }
 
-    constructor(address _tokenAddress ,uint256 _globalLockPeriod) public{
-        tokenAddress=_tokenAddress;
+    constructor(address _tokenAddress ,uint256 _globalLockPeriod,uint256 _unlockNum) public{
+        token = FSTToken(_tokenAddress);
         globalLockPeriod=_globalLockPeriod;
+        unlockNum=_unlockNum;
     }
-    modifier onlyAgent() {
-        require(agentAddress==msg.sender);
-        _;
-    }
-    function setAgent(address _adr) public onlyOwner{
-        require(_adr!=address(0));
-        agentAddress=_adr;
-    }
-    function setHolder(address _adr,uint256 _lockAmount) public onlyAgent {
+    function addHolderToken(address _adr,uint256 _lockAmount) public onlyOwner {
         HolderSchedule storage holderSchedule = holderList[_adr];
         require(_lockAmount > 0);
-        StandardERC20 token = StandardERC20(tokenAddress);
-        require(token.balanceOf(this) >= totalUnLockTokens.add(_lockAmount));
-        holderSchedule.startAt = block.timestamp;
-        holderSchedule.lastUnlocktime=holderSchedule.startAt;
-        holderSchedule.lockPeriod = globalLockPeriod.add(holderSchedule.startAt);
+        if(holderSchedule.lockAmount==0){
+            holderSchedule.startAt = block.timestamp;
+            holderSchedule.lastUnlocktime=holderSchedule.startAt;
+            holderSchedule.releasedAmount=0;
+            holderSchedule.isReleased = false;
+            holderAccountList[holderAccountList.length-1]=_adr;
+        }
         holderSchedule.lockAmount=holderSchedule.lockAmount.add(_lockAmount);
-        holderSchedule.isReleased = false;
-        holderSchedule.releasedAmount=0;
-        holderAccountList[holderAccountList.length-1]=_adr;
+        totalLockTokens=totalLockTokens.add(_lockAmount);
+        emit HolderToken(_adr,_lockAmount,holderSchedule.lockAmount.add(holderSchedule.releasedAmount));
     }
 
+    function subHolderToken(address _adr,uint256 _lockAmount)public onlyOwner{
+        HolderSchedule storage holderSchedule = holderList[_adr];
+        require(_lockAmount > 0);
+        require(holderSchedule.lockAmount>=_lockAmount);
+        holderSchedule.lockAmount=holderSchedule.lockAmount.sub(_lockAmount);
+        totalLockTokens=totalLockTokens.sub(_lockAmount);
+        emit HolderToken(_adr,_lockAmount,holderSchedule.lockAmount.add(holderSchedule.releasedAmount));
+    }
 
+    function accessToken(address rec,uint256 value) private {
+        token.mint(rec,value);
+    }
     function releaseMyTokens() public{
         releaseTokens(msg.sender);
     }
 
     function releaseTokens(address _adr) public{
         require(_adr!=address(0));
-        //todo add holderList lockAmount check
         HolderSchedule storage holderSchedule = holderList[_adr];
-        require(holderSchedule.lockAmount>0&&holderSchedule.isReleased==false);
-        uint256 unlockAmount=lockStrategy(_adr);
-        require(unlockAmount>0);
-//        require(holderSchedule.lockAmount>=unlockAmount);
-        holderSchedule.lockAmount=holderSchedule.lockAmount.sub(unlockAmount);
-        holderSchedule.releasedAmount=holderSchedule.releasedAmount.add(unlockAmount);
-        holderSchedule.lastUnlocktime=block.timestamp;
-        if(holderSchedule.lockAmount==0){
-            holderSchedule.isReleased=true;
+        if(holderSchedule.isReleased==false&&holderSchedule.lockAmount>0){
+            //        require(holderSchedule.lockAmount>0&&holderSchedule.isReleased==false);
+            uint256 unlockAmount=lockStrategy(_adr);
+            //        require(unlockAmount>0);
+            //        require(holderSchedule.lockAmount>=unlockAmount);
+            if(unlockAmount>0&&holderSchedule.lockAmount>=unlockAmount){
+                holderSchedule.lockAmount=holderSchedule.lockAmount.sub(unlockAmount);
+                holderSchedule.releasedAmount=holderSchedule.releasedAmount.add(unlockAmount);
+                holderSchedule.lastUnlocktime=block.timestamp;
+                if(holderSchedule.lockAmount==0){
+                    holderSchedule.isReleased=true;
+                }
+                accessToken(_adr,unlockAmount);
+                emit ReleaseTokens(_adr,unlockAmount);
+            }
         }
-        StandardERC20 token = StandardERC20(tokenAddress);
-        token.transfer(_adr,unlockAmount);
-        emit ReleaseTokens(_adr,unlockAmount);
     }
     function releaseEachTokens() public {
         require(holderAccountList.length>0);
@@ -91,8 +96,7 @@ contract FSTTokenHolder is Ownable{
                     if(holderSchedule.lockAmount==0){
                         holderSchedule.isReleased=true;
                     }
-                    StandardERC20 token = StandardERC20(tokenAddress);
-                    token.transfer(holderAccountList[i],unlockAmount);
+                    accessToken(holderAccountList[i],unlockAmount);
                 }
             }
         }

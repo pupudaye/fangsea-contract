@@ -1,6 +1,13 @@
 var FSTToken = artifacts.require("./FSTToken.sol");
-var amount = 100000;
+var amount = 1000000000;
 contract('FSTToken', function(accounts) {
+    it("should get decimals correctly ",function () {
+        return FSTToken.deployed().then(function (instance) {
+            return instance.decimals.call();
+        }).then(function(_decimals) {
+            amount=amount*(10**_decimals);
+        });
+    });
   it("should init balance value is 0",function () {
       return FSTToken.deployed().then(function (instance) {
           return instance.balanceOf.call(accounts[0]);
@@ -19,7 +26,8 @@ contract('FSTToken', function(accounts) {
       return FSTToken.deployed().then(function (instance) {
           return instance.cap.call();
       }).then(function(hasCap) {
-          assert.equal(web3.fromWei(hasCap, 'ether'), amount, "cap is not equal "+hasCap);
+          assert.equal(hasCap, amount, "cap is not equal "+hasCap);
+          //assert.equal(web3.fromWei(hasCap, 'ether'), amount, "cap is not equal "+hasCap);
       });
   });
   it("should mint Token correctly ", function() {
