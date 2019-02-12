@@ -4,11 +4,12 @@ contract('FSTTokenAgentHolder', function(accounts) {
     var fSTTokenAgentHolder;
     var owner=accounts[0];
     var whiteAccounts=[accounts[1],accounts[2]];
+    var decimals=10**18;
     /**
      * todo FSTTokenAgentHolder set agent and  Holder
      */
     it("should set agent and  Holder is correctly",function () {
-        var holderAmount=10000;
+        var holderAmount=10000*decimals;
         return FSTTokenAgentHolder.deployed().then(function (instance) {
             fSTTokenAgentHolder=instance;
             return fSTTokenAgentHolder.addHolderToken(whiteAccounts[0],10000,{from:owner});
@@ -25,6 +26,32 @@ contract('FSTTokenAgentHolder', function(accounts) {
         });
     })
 
+    it("should holderSurplusTime is correctly",function () {
+        return FSTTokenAgentHolder.deployed().then(function (instance) {
+            fSTTokenAgentHolder=instance;
+            return fSTTokenAgentHolder.holderSurplusTime(whiteAccounts[0],{from:owner});
+        }).then(function (holderSurplusTime) {
+            assert.equal(holderSurplusTime,0, "holderSurplusTime is "+holderSurplusTime);
+        });
+    });
+
+    it("should get totalLockTokens is correctly",function () {
+        return FSTTokenAgentHolder.deployed().then(function (instance) {
+            fSTTokenAgentHolder=instance;
+            return fSTTokenAgentHolder.totalLockTokens.call({from:owner});
+        }).then(function (totalLockTokens) {
+            assert.equal(totalLockTokens,10000*decimals, "release Token value is "+totalLockTokens);
+        });
+    });
+
+    it("should get totalUNLockTokens is correctly",function () {
+        return FSTTokenAgentHolder.deployed().then(function (instance) {
+            fSTTokenAgentHolder=instance;
+            return fSTTokenAgentHolder.totalUNLockTokens.call({from:owner});
+        }).then(function (totalUNLockTokens) {
+            assert.equal(totalUNLockTokens,0, "release Token value is "+totalUNLockTokens);
+        });
+    });
     var fstToken;
     /**
      * todo FSTTokenHolder releaseTokens

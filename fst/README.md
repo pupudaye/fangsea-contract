@@ -39,7 +39,9 @@
 | destory(address _adrs)       | 销毁锁仓合约| 
 | renounceOwnership()    | 释放合约拥有权| 
 | transferOwnership(address newOwner)    | 转让合约拥有权|    
-
+| holderSurplusTime(address _adr)    | 获取下次解锁剩余时间|
+| totalLockTokens()    | 获取总锁仓数量|
+| totalUNLockTokens()    | 获取总解仓数量|
 # ​发行
 ## 准备钱包
 
