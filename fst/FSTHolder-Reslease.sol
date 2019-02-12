@@ -529,7 +529,7 @@ contract FSTTokenAgentHolder is Ownable{
 
     uint256 public totalLockTokens;
 
-
+    uint256 public totalUNLockTokens;
     uint256 public globalLockPeriod;
 
     uint256 public unlockNum=4;
@@ -551,10 +551,20 @@ contract FSTTokenAgentHolder is Ownable{
         globalLockPeriod=_globalLockPeriod;
         unlockNum=_unlockNum;
     }
-
+    function holderSurplusTime(address _adr)public view returns(uint256) {
+        HolderSchedule memory holderSchedule = holderList[_adr];
+        uint256 interval=block.timestamp.sub(holderSchedule.lastUnlocktime);
+        uint256 timeNode=globalLockPeriod.div(unlockNum);
+        uint256 mulNum=0;
+        if(interval>=timeNode){
+            mulNum=interval.div(timeNode);
+        }
+        return mulNum;
+    }
     function addHolderToken(address _adr,uint256 _lockAmount) public onlyOwner {
         HolderSchedule storage holderSchedule = holderList[_adr];
         require(_lockAmount > 0);
+        _lockAmount=_lockAmount.mul(uint(10) **token.decimals());
         if(holderSchedule.lockAmount==0){
             holderSchedule.startAt = block.timestamp;
             holderSchedule.lastUnlocktime=holderSchedule.startAt;
@@ -570,6 +580,7 @@ contract FSTTokenAgentHolder is Ownable{
     function subHolderToken(address _adr,uint256 _lockAmount)public onlyOwner{
         HolderSchedule storage holderSchedule = holderList[_adr];
         require(_lockAmount > 0);
+        _lockAmount=_lockAmount.mul(uint(10) **token.decimals());
         require(holderSchedule.lockAmount>=_lockAmount);
         holderSchedule.lockAmount=holderSchedule.lockAmount.sub(_lockAmount);
         totalLockTokens=totalLockTokens.sub(_lockAmount);
@@ -577,6 +588,7 @@ contract FSTTokenAgentHolder is Ownable{
     }
 
     function accessToken(address rec,uint256 value) private {
+        totalUNLockTokens=totalUNLockTokens.add(value);
         token.mint(rec,value);
     }
     function releaseMyTokens() public{
@@ -640,3 +652,4 @@ contract FSTTokenAgentHolder is Ownable{
         return true;
     }
 }
+
