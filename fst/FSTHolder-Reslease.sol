@@ -517,10 +517,6 @@ contract FSTToken is ERC20Capped {
     }
 
 }
-
-
-
-
 contract FSTTokenAgentHolder is Ownable{
 
     using SafeMath for uint256;
@@ -534,7 +530,7 @@ contract FSTTokenAgentHolder is Ownable{
 
     uint256 public unlockNum=4;
     mapping (address => HolderSchedule) public holderList;
-    address[] public holderAccountList=[0];
+    address[] public holderAccountList=[0x0];
     event ReleaseTokens(address indexed who,uint256 value);
     event HolderToken(address indexed who,uint256 value,uint256 totalValue);
 
@@ -565,12 +561,16 @@ contract FSTTokenAgentHolder is Ownable{
         HolderSchedule storage holderSchedule = holderList[_adr];
         require(_lockAmount > 0);
         _lockAmount=_lockAmount.mul(uint(10) **token.decimals());
-        if(holderSchedule.lockAmount==0){
+        if(holderSchedule.lockAmount==0&&holderSchedule.isReleased==false){
             holderSchedule.startAt = block.timestamp;
             holderSchedule.lastUnlocktime=holderSchedule.startAt;
             holderSchedule.releasedAmount=0;
             holderSchedule.isReleased = false;
-            holderAccountList[holderAccountList.length-1]=_adr;
+            if(holderAccountList[0]==0x0){
+                holderAccountList[0]=_adr;
+            }else{
+                holderAccountList.push(_adr);
+            }
         }
         holderSchedule.lockAmount=holderSchedule.lockAmount.add(_lockAmount);
         totalLockTokens=totalLockTokens.add(_lockAmount);
@@ -652,4 +652,3 @@ contract FSTTokenAgentHolder is Ownable{
         return true;
     }
 }
-

@@ -18,11 +18,19 @@ contract('FSTTokenAgentHolder', function(accounts) {
         }).then(function () {
             return fSTTokenAgentHolder.addHolderToken(whiteAccounts[0],5000,{from:owner});
         }).then(function () {
+            return fSTTokenAgentHolder.addHolderToken(whiteAccounts[1],5000,{from:owner});
+        }).then(function () {
             return fSTTokenAgentHolder.holderList.call(whiteAccounts[0],{from:owner});
         }).then(function (holderSchedule) {
             assert.equal(holderSchedule[1], holderAmount, "set agent and  Holder is fail,setRes="+holderSchedule[1]);
             assert.equal(holderSchedule[2], 0, "set agent and  Holder is fail,setRes="+holderSchedule[2]);
             assert.equal(holderSchedule[4], false, "set agent and  Holder is fail,setRes="+holderSchedule[4]);
+           return fSTTokenAgentHolder.holderAccountList.call(0,{from:owner});
+         }).then(function (address) {
+            assert.equal(whiteAccounts[0], address, "set holderAccountList 0 is "+address);
+            return fSTTokenAgentHolder.holderAccountList.call(1,{from:owner});
+        }).then(function (address) {
+            assert.equal(whiteAccounts[1], address, "set holderAccountList 1 is "+address);
         });
     })
 
@@ -40,7 +48,7 @@ contract('FSTTokenAgentHolder', function(accounts) {
             fSTTokenAgentHolder=instance;
             return fSTTokenAgentHolder.totalLockTokens.call({from:owner});
         }).then(function (totalLockTokens) {
-            assert.equal(totalLockTokens,10000*decimals, "release Token value is "+totalLockTokens);
+            assert.equal(totalLockTokens,15000*decimals, "release Token value is "+totalLockTokens);
         });
     });
 
