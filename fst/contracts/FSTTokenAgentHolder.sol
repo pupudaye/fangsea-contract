@@ -15,9 +15,12 @@ contract FSTTokenAgentHolder is Ownable{
     uint256 public totalUNLockTokens;
     uint256 public globalLockPeriod;
 
-    uint256 public unlockNum=4;
+    uint256 public totalUnlockNum=4;
     mapping (address => HolderSchedule) public holderList;
     address[] public holderAccountList=[0x0];
+
+    uint256 private singleNodeTime;
+
     event ReleaseTokens(address indexed who,uint256 value);
     event HolderToken(address indexed who,uint256 value,uint256 totalValue);
 
@@ -25,25 +28,27 @@ contract FSTTokenAgentHolder is Ownable{
         uint256 startAt;
         uint256 lockAmount;
         uint256 releasedAmount;
+        uint256 totalReleasedAmount;
         uint256 lastUnlocktime;
         bool isReleased;
         bool isInvested;
+        uint256 unlockNumed;
     }
 
-    constructor(address _tokenAddress ,uint256 _globalLockPeriod,uint256 _unlockNum) public{
+    constructor(address _tokenAddress ,uint256 _globalLockPeriod,uint256 _totalUnlockNum) public{
         token = FSTToken(_tokenAddress);
         globalLockPeriod=_globalLockPeriod;
-        unlockNum=_unlockNum;
+        totalUnlockNum=_totalUnlockNum;
+        singleNodeTime=globalLockPeriod.div(totalUnlockNum);
     }
     function holderSurplusTime(address _adr)public view returns(uint256) {
         HolderSchedule memory holderSchedule = holderList[_adr];
-        uint256 interval=block.timestamp.sub(holderSchedule.lastUnlocktime);
-        uint256 timeNode=globalLockPeriod.div(unlockNum);
-        uint256 mulNum=0;
-        if(interval>=timeNode){
-            mulNum=interval.div(timeNode);
+        uint256 interval=block.timestamp.sub(holderSchedule.startAt);
+        uint256 intervalTime=0;
+        if(interval<singleNodeTime){
+            intervalTime=singleNodeTime.sub(interval);
         }
-        return mulNum;
+        return intervalTime;
     }
     function addHolderToken(address _adr,uint256 _lockAmount) public onlyOwner {
         HolderSchedule storage holderSchedule = holderList[_adr];
@@ -94,9 +99,12 @@ contract FSTTokenAgentHolder is Ownable{
             if(unlockAmount>0&&holderSchedule.lockAmount>=unlockAmount){
                 holderSchedule.lockAmount=holderSchedule.lockAmount.sub(unlockAmount);
                 holderSchedule.releasedAmount=holderSchedule.releasedAmount.add(unlockAmount);
+                holderSchedule.totalReleasedAmount=holderSchedule.totalReleasedAmount.add(unlockAmount);
                 holderSchedule.lastUnlocktime=block.timestamp;
                 if(holderSchedule.lockAmount==0){
                     holderSchedule.isReleased=true;
+                    holderSchedule.releasedAmount=0;
+                    holderSchedule.unlockNumed=0;
                 }
                 accessToken(_adr,unlockAmount);
                 emit ReleaseTokens(_adr,unlockAmount);
@@ -112,27 +120,33 @@ contract FSTTokenAgentHolder is Ownable{
                 if(unlockAmount>0){
                     holderSchedule.lockAmount=holderSchedule.lockAmount.sub(unlockAmount);
                     holderSchedule.releasedAmount=holderSchedule.releasedAmount.add(unlockAmount);
+                    holderSchedule.totalReleasedAmount=holderSchedule.totalReleasedAmount.add(unlockAmount);
                     holderSchedule.lastUnlocktime=block.timestamp;
                     if(holderSchedule.lockAmount==0){
                         holderSchedule.isReleased=true;
+                        holderSchedule.releasedAmount=0;
+                        holderSchedule.unlockNumed=0;
                     }
                     accessToken(holderAccountList[i],unlockAmount);
                 }
             }
         }
     }
-    function lockStrategy(address _adr) private view returns(uint256){
-        HolderSchedule memory holderSchedule = holderList[_adr];
-        uint256 interval=block.timestamp.sub(holderSchedule.lastUnlocktime);
-        uint256 timeNode=globalLockPeriod.div(unlockNum);
+    function lockStrategy(address _adr) private returns(uint256){
+        HolderSchedule storage holderSchedule = holderList[_adr];
+        uint256 interval=block.timestamp.sub(holderSchedule.startAt);
         uint256 unlockAmount=0;
-        if(interval>=timeNode){
-            uint256 mulNum=interval.div(timeNode);
-            uint totalAmount=holderSchedule.lockAmount.add(holderSchedule.releasedAmount);
-            uint singleAmount=totalAmount.div(unlockNum);
-            unlockAmount=singleAmount.mul(mulNum);
-            if(unlockAmount>holderSchedule.lockAmount){
-                unlockAmount=holderSchedule.lockAmount;
+        if(interval>=singleNodeTime){
+            uint256 unlockNum=interval.div(singleNodeTime);
+            uint256 nextUnlockNum=unlockNum.sub(holderSchedule.unlockNumed);
+            if(nextUnlockNum>0){
+                holderSchedule.unlockNumed=unlockNum;
+                uint totalAmount=holderSchedule.lockAmount.add(holderSchedule.releasedAmount);
+                uint singleAmount=totalAmount.div(totalUnlockNum);
+                unlockAmount=singleAmount.mul(nextUnlockNum);
+                if(unlockAmount>holderSchedule.lockAmount){
+                    unlockAmount=holderSchedule.lockAmount;
+                }
             }
         }
         return unlockAmount;

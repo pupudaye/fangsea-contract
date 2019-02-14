@@ -24,7 +24,7 @@ contract('FSTTokenAgentHolder', function(accounts) {
         }).then(function (holderSchedule) {
             assert.equal(holderSchedule[1], holderAmount, "set agent and  Holder is fail,setRes="+holderSchedule[1]);
             assert.equal(holderSchedule[2], 0, "set agent and  Holder is fail,setRes="+holderSchedule[2]);
-            assert.equal(holderSchedule[4], false, "set agent and  Holder is fail,setRes="+holderSchedule[4]);
+            assert.equal(holderSchedule[5], false, "set agent and  Holder is fail,setRes="+holderSchedule[5]);
            return fSTTokenAgentHolder.holderAccountList.call(0,{from:owner});
          }).then(function (address) {
             assert.equal(whiteAccounts[0], address, "set holderAccountList 0 is "+address);
@@ -34,14 +34,14 @@ contract('FSTTokenAgentHolder', function(accounts) {
         });
     })
 
-    it("should holderSurplusTime is correctly",function () {
-        return FSTTokenAgentHolder.deployed().then(function (instance) {
-            fSTTokenAgentHolder=instance;
-            return fSTTokenAgentHolder.holderSurplusTime(whiteAccounts[0],{from:owner});
-        }).then(function (holderSurplusTime) {
-            assert.equal(holderSurplusTime,0, "holderSurplusTime is "+holderSurplusTime);
-        });
-    });
+    // it("should holderSurplusTime is correctly",function () {
+    //     return FSTTokenAgentHolder.deployed().then(function (instance) {
+    //         fSTTokenAgentHolder=instance;
+    //         return fSTTokenAgentHolder.holderSurplusTime(whiteAccounts[0],{from:owner});
+    //     }).then(function (holderSurplusTime) {
+    //         assert.equal(holderSurplusTime,0, "holderSurplusTime is "+holderSurplusTime);
+    //     });
+    // });
 
     it("should get totalLockTokens is correctly",function () {
         return FSTTokenAgentHolder.deployed().then(function (instance) {
