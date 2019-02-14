@@ -27,6 +27,7 @@ contract FSTTokenAgentHolder is Ownable{
         uint256 releasedAmount;
         uint256 lastUnlocktime;
         bool isReleased;
+        bool isInvested;
     }
 
     constructor(address _tokenAddress ,uint256 _globalLockPeriod,uint256 _unlockNum) public{
@@ -48,17 +49,20 @@ contract FSTTokenAgentHolder is Ownable{
         HolderSchedule storage holderSchedule = holderList[_adr];
         require(_lockAmount > 0);
         _lockAmount=_lockAmount.mul(uint(10) **token.decimals());
-        if(holderSchedule.lockAmount==0&&holderSchedule.isReleased==false){
+        if(holderSchedule.isInvested==false||holderSchedule.isReleased==true){
+            holderSchedule.isInvested=true;
             holderSchedule.startAt = block.timestamp;
             holderSchedule.lastUnlocktime=holderSchedule.startAt;
-            holderSchedule.releasedAmount=0;
-            holderSchedule.isReleased = false;
-            if(holderAccountList[0]==0x0){
-                holderAccountList[0]=_adr;
-            }else{
-                holderAccountList.push(_adr);
+            if(holderSchedule.isReleased==false){
+                holderSchedule.releasedAmount=0;
+                if(holderAccountList[0]==0x0){
+                    holderAccountList[0]=_adr;
+                }else{
+                    holderAccountList.push(_adr);
+                }
             }
         }
+        holderSchedule.isReleased = false;
         holderSchedule.lockAmount=holderSchedule.lockAmount.add(_lockAmount);
         totalLockTokens=totalLockTokens.add(_lockAmount);
         emit HolderToken(_adr,_lockAmount,holderSchedule.lockAmount.add(holderSchedule.releasedAmount));
