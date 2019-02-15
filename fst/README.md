@@ -39,7 +39,6 @@
 | destory(address _adrs)       | 销毁锁仓合约| 
 | renounceOwnership()    | 释放合约拥有权| 
 | transferOwnership(address newOwner)    | 转让合约拥有权|    
-| holderSurplusTime(address _adr)    | 获取下次解锁剩余时间|
 | totalLockTokens()    | 获取总锁仓数量|
 | totalUNLockTokens()    | 获取总解仓数量|
 # ​发行
@@ -146,7 +145,7 @@
 |     Contract  |               Address                     |                Desc                     |
 |:-----------   |:------------------------------------------|:----------------------------------------|
 | FSTToken      | 0x61f657ad83844f6439d41edb55aa01533a4e366a | FST Token 是流通货币 |
-| FSTTokenAgentHolder| 0xe561a874a2667860125c42a214c55a5c36bcc759 | 持有人锁仓合约   |
+| FSTTokenAgentHolder| 0x7b2d9d2e722bc72a4bd261a9e8b6d4925bfd1a91 | 持有人锁仓合约   |
 
 
 * 测试合约地址-测试

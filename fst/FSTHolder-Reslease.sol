@@ -555,15 +555,7 @@ contract FSTTokenAgentHolder is Ownable{
         totalUnlockNum=_totalUnlockNum;
         singleNodeTime=globalLockPeriod.div(totalUnlockNum);
     }
-    function holderSurplusTime(address _adr)public view returns(uint256) {
-        HolderSchedule memory holderSchedule = holderList[_adr];
-        uint256 interval=block.timestamp.sub(holderSchedule.startAt);
-        uint256 intervalTime=0;
-        if(interval<singleNodeTime){
-            intervalTime=singleNodeTime.sub(interval);
-        }
-        return intervalTime;
-    }
+
     function addHolderToken(address _adr,uint256 _lockAmount) public onlyOwner {
         HolderSchedule storage holderSchedule = holderList[_adr];
         require(_lockAmount > 0);
