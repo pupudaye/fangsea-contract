@@ -96,12 +96,12 @@ contract('FSTTokenAgentHolder', function(accounts) {
     /**
      * todo destory contract,transfer eth
      */
-    it("should destory run is correctly",function () {
-        // var ethBalance=web3.eth.getBalance(owner);
-        FSTTokenAgentHolder.deployed().then(function (instance) {
-            return instance.destory(accounts[9],{from: owner});
-        }).then(function () {
-            // assert.equal(100,1,"ethBalance="+ethBalance);
-        });
-    });
+    // it("should destory run is correctly",function () {
+    //     // var ethBalance=web3.eth.getBalance(owner);
+    //     FSTTokenAgentHolder.deployed().then(function (instance) {
+    //         return instance.destory(accounts[9],{from: owner});
+    //     }).then(function () {
+    //         // assert.equal(100,1,"ethBalance="+ethBalance);
+    //     });
+    // });
 });

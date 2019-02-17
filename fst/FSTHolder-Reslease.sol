@@ -657,11 +657,6 @@ contract FSTTokenAgentHolder is Ownable{
         }
         return unlockAmount;
     }
-    function destory(address _adrs) public onlyOwner returns(bool){
-        require(_adrs!=address(0));
-        selfdestruct(_adrs);
-        return true;
-    }
 }
 
 

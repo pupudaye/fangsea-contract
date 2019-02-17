@@ -36,7 +36,6 @@
 | releaseMyTokens()                     | 解仓自己的可解额度| 
 | releaseTokens(address _adr)                  | 解仓指定人的可解额度| 
 | releaseEachTokens()                          | 解仓所有人的可解额度| 
-| destory(address _adrs)       | 销毁锁仓合约| 
 | renounceOwnership()    | 释放合约拥有权| 
 | transferOwnership(address newOwner)    | 转让合约拥有权|    
 | totalLockTokens()    | 获取总锁仓数量|
@@ -54,8 +53,8 @@
 
 ## 编译发布FSTToken
 
-1. 打开以太坊开发工具http://remix.ethereum.org/#optimize=false&version=soljson-v0.4.24+commit.e67f0147.js
-2. 选择编译版本为v0.4.24
+1. 打开以太坊开发工具http://remix.ethereum.org/#optimize=false&version=soljson-v0.4.25+commit.e67f0147.js
+2. 选择编译版本为v0.4.25
 3. 将FST-Reslease.sol文件内的所有代码复制到工具编辑框内
 4. 检查编译结果是否正确(如图)
 ![image](https://raw.githubusercontent.com/pupudaye/fangsea-contract/master/fst/images/1.png)
@@ -101,8 +100,8 @@
 ![image](https://raw.githubusercontent.com/pupudaye/fangsea-contract/master/fst/images/9.png)
 
 ## 编译发布FSTTokenAgentHolder
-1. 打开以太坊开发工具http://remix.ethereum.org/#optimize=false&version=soljson-v0.4.24+commit.e67f0147.js
-2. 选择编译版本为v0.4.24
+1. 打开以太坊开发工具http://remix.ethereum.org/#optimize=false&version=soljson-v0.4.25+commit.e67f0147.js
+2. 选择编译版本为v0.4.25
 3. 将FSTHolder-Reslease.sol文件内的所有代码复制到工具编辑框内
 4. 检查编译结果是否正确(如图)
 
