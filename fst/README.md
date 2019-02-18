@@ -159,8 +159,8 @@
 
 |     Contract  |               Address                     |                Desc                     |
 |:-----------   |:------------------------------------------|:----------------------------------------|
-| FSTToken      | -| FST Token 是流通货币 |
-| FSTTokenAgentHolder| -| 持有人锁仓合约   |
+| FSTToken      | 0x8171740C3f6631dA0496ca237e6ec7b9b94ed01E| FST Token 是流通货币 |
+| FSTTokenAgentHolder| 0x65375171f109e90B9EA3e22F4734621857F13ea4| 持有人锁仓合约   |
 
 
 
