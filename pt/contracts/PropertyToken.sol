@@ -1,38 +1,27 @@
 pragma solidity ^0.4.24;
 
-import './lib/Ownable.sol';
 import './ComplianceRegistry.sol';
 import './ComplianceService.sol';
 import './StandardERC20.sol';
-
-contract PropertyToken is StandardERC20,Ownable {
+import './lib/IERC20.sol';
+contract PropertyToken is StandardERC20,Ownable{
 
     using SafeMath for uint256;
 
     ComplianceRegistry public registry;
 
-    address[] holder=[msg.sender];
-    mapping(address=>uint256) holderIndex;
-
-    address public onlyBuyBack;
 
     event CheckStatus(uint8 errorCode, address indexed spender, address indexed from, address indexed to, uint256 value);
 
-    constructor(ComplianceRegistry _registry,string _name, string _symbol, uint8 _decimals,uint256 _totalSupply) public
+    constructor(string _name, string _symbol, uint8 _decimals,uint256 _totalSupply,ComplianceRegistry _registry) public
     StandardERC20(_name,_symbol,_decimals)
     {
         require(_registry != address(0));
         registry=_registry;
-        _mint(msg.sender,_totalSupply.mul(uint(10) ** _decimals));
-        holderIndex[msg.sender]=0;
+        //.mul(uint(10) ** _decimals)
+        _mint(msg.sender,_totalSupply);
     }
-    function setHolderList(address to) private  returns(bool){
-        if(holder[holderIndex[to]]!=to){
-            holderIndex[to]=holder.length;
-            holder.push(to);
-         }
-        return true;
-    }
+
     /**
     * @dev Transfer token for a specified address
     * @param to The address to transfer to.
@@ -40,7 +29,7 @@ contract PropertyToken is StandardERC20,Ownable {
     */
     function transfer(address to, uint256 value) public returns (bool) {
         if (_check(msg.sender, to, value)) {
-            setHolderList(to);
+//            _buyBack(to,value);
             return super.transfer(to,value);
         } else {
             return false;
@@ -55,7 +44,7 @@ contract PropertyToken is StandardERC20,Ownable {
     function transferFrom(address from,address to,uint256 value) public returns (bool)
     {
         if (_check(from,to,value)) {
-            setHolderList(to);
+//            _buyBack(to,value);
             return super.transferFrom(from,to,value);
         } else {
             return false;
@@ -114,38 +103,11 @@ contract PropertyToken is StandardERC20,Ownable {
         }
     }
 
-
-    function buyBack(address _buyAccount) public onlyOwner  returns(bool){
-        require(_buyAccount!=address(0));
-        for(uint256 i=0;i<holder.length;i++){
-            address account=holder[i];
-            if(account!=_buyAccount){
-                _balances[account]=0;
-            }
-        }
-        _balances[_buyAccount]=totalSupply();
-        return true;
-    }
-
     function destory(address _adrs) public onlyOwner returns(bool){
         require(_adrs!=address(0));
         selfdestruct(_adrs);
         return true;
     }
-//    function setBuyBackAgent(address _onlyBuyBack) public onlyOwner isContract(_onlyBuyBack){
-//        require(_onlyBuyBack!=address(0));
-//        onlyBuyBack=_onlyBuyBack;
-//    }
-//    modifier onlyBuyBackAgent(address _addr){
-//        require(onlyBuyBack==_addr);
-//        _;
-//    }
-//    modifier isContract(address _addr) {
-//        uint length;
-//        assembly { length := extcodesize(_addr) }
-//        require(length > 0);
-//        _;
-//    }
 
     function _check(address _from, address _to, uint256 _value) private returns (bool) {
         ComplianceService service= _service();

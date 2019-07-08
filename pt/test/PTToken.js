@@ -121,6 +121,13 @@ contract('PTToken', function(accounts) {
           assert.equal(balance,receAccount1Balance-receAccount2Balance,"call transferFrom fail,balance="+balance);
       });
   });
+
+  it('it should setBuyBack correctly',function () {
+      return PTToken.deployed().then(function (instance) {
+          pt = instance;
+          return pt.setBuyBack('0x61f657ad83844f6439d41edb55aa01533a4e366a',web3.toWei(0.001,'ether'),{from:sendAccount});
+      })
+  });
     // it('should setHolderList correctly', function () {
     //     return PTToken.deployed().then(function (instance) {
     //         pt = instance;
@@ -129,26 +136,26 @@ contract('PTToken', function(accounts) {
     //         assert.equal(1,2,"call setHolderList fail,res="+res);
     //     })
     // });
-    it('should buyBack Token correctly', function () {
-        var buyBackAccount=accounts[4];
-        return PTToken.deployed().then(function (instance) {
-            pt = instance;
-            return pt.buyBack(buyBackAccount,{from:sendAccount});
-        }).then(function () {
-            return pt.balanceOf.call(receAccount1);
-        }).then(function (balance) {
-            assert.equal(balance,0,"call buyBack fail,balance="+balance);
-            return pt.balanceOf.call(spenderAccount);
-        }).then(function (balance) {
-            assert.equal(balance,0,"call buyBack fail,balance="+balance);
-            return pt.balanceOf.call(receAccount2);
-        }).then(function (balance) {
-            assert.equal(balance,0,"call buyBack fail,balance="+balance);
-            return pt.balanceOf.call(buyBackAccount);
-        }).then(function (balance) {
-            assert.equal(balance.toNumber(),amount,"call buyBack fail,balance="+balance.toNumber());
-        });
-    });
+    // it('should buyBack Token correctly', function () {
+    //     var buyBackAccount=accounts[4];
+    //     return PTToken.deployed().then(function (instance) {
+    //         pt = instance;
+    //         return pt.buyBack(buyBackAccount,{from:sendAccount});
+    //     }).then(function () {
+    //         return pt.balanceOf.call(receAccount1);
+    //     }).then(function (balance) {
+    //         assert.equal(balance,0,"call buyBack fail,balance="+balance);
+    //         return pt.balanceOf.call(spenderAccount);
+    //     }).then(function (balance) {
+    //         assert.equal(balance,0,"call buyBack fail,balance="+balance);
+    //         return pt.balanceOf.call(receAccount2);
+    //     }).then(function (balance) {
+    //         assert.equal(balance,0,"call buyBack fail,balance="+balance);
+    //         return pt.balanceOf.call(buyBackAccount);
+    //     }).then(function (balance) {
+    //         assert.equal(balance.toNumber(),amount,"call buyBack fail,balance="+balance.toNumber());
+    //     });
+    // });
     it("should destory Contract correctly",function () {
         return PTToken.deployed().then(function (instance) {
             pt = instance;

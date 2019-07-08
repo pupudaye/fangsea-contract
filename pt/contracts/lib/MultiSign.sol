@@ -7,9 +7,6 @@ contract MultiSign is Ownable{
 
     mapping (address => bool) private managers;
 
-    struct EventRequest{
-
-    }
     constructor(uint8 _min_signatures)public{
         min_signatures=_min_signatures;
     }
