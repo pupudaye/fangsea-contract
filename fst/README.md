@@ -40,6 +40,25 @@
 | transferOwnership(address newOwner)    | 转让合约拥有权|    
 | totalLockTokens()    | 获取总锁仓数量|
 | totalUNLockTokens()    | 获取总解仓数量|
+
+## FSTTokenTeamAgentHolder
+
+    此合约为专门为团队锁仓实现的锁仓合约,阶段解锁比例由发行人设置
+    
+|     Function                 |               Desc                        |
+|:------------------------------------------ |:-------------------|
+| addHolderToken(address _adr,uint256 _lockAmount)                         | 添加持有人锁仓额度 |
+| subHolderToken(address _adr,uint256 _lockAmount)                       | 减少持有人锁仓额度| 
+| releaseMyTokens()                     | 解仓自己的可解额度| 
+| releaseTokens(address _adr)                  | 解仓指定人的可解额度| 
+| renounceOwnership()    | 释放合约拥有权| 
+| transferOwnership(address newOwner)    | 转让合约拥有权|    
+| totalLockTokens()    | 获取总锁仓数量|
+| totalUNLockTokens()    | 获取总解仓数量|
+| hasUnlockNum()    | 从开始锁仓起止时间算可解仓阶段次数|
+| hasUnlockAmount()    | 设定解仓次数计算解仓额度|
+
+
 # ​发行
 ## 准备钱包
 
@@ -50,6 +69,7 @@
 
 1. FSTToken源代码是 FST-Reslease.sol文件
 2. FSTTokenAgentHolder源代码是FSTHolder-Reslease.sol文件
+3. FSTTokenTeamAgentHolder源代码是TeamHolder.sol文件
 
 ## 编译发布FSTToken
 
@@ -139,7 +159,7 @@
 ![image](https://raw.githubusercontent.com/pupudaye/fangsea-contract/master/fst/images/12.png)
 
 # 合约地址
-* 测试合约地址-开发
+* 测试合约地址-测试FST
 
 |     Contract  |               Address                     |                Desc                     |
 |:-----------   |:------------------------------------------|:----------------------------------------|
@@ -147,13 +167,26 @@
 | FSTTokenAgentHolder| 0x7b2d9d2e722bc72a4bd261a9e8b6d4925bfd1a91 | 持有人锁仓合约   |
 
 
-* 测试合约地址-测试
+* 测试合约地址-STG FST
 
 |     Contract  |               Address                     |                Desc                     |
 |:-----------   |:------------------------------------------|:----------------------------------------|
-| FSTToken      | 0x3a593f346c3ce9d518a336899458574b171d1dd4 | FST Token 是流通货币 |
-| FSTTokenAgentHolder| 0xc6D4755BAd1f8e35A782a1b1F95F827c0140A72e | 持有人锁仓合约   |
+| FSTToken      | 0x4d2a45556aa5951c8dd6885e87ecc74c0462e33b | FST Token 是流通货币 |
+| FSTTokenAgentHolder| 0xd90ab0ee24ee3f6e376206f7b8cc7b13f8ef0c9c | 持有人锁仓合约   |
 
+* 测试合约地址-测试 GUSD
+
+|     Contract  |               Address                     |                Desc                     |
+|:-----------   |:------------------------------------------|:----------------------------------------|
+| FSTToken      | 0x9a8fe1459bf9f4979168b8f1ca7b5d161ccf5d68 | FST Token 是流通货币 |
+
+
+* 测试合约地址-测试 USDT
+
+|     Contract  |               Address                     |                Desc                     |
+|:-----------   |:------------------------------------------|:----------------------------------------|
+| FSTToken      | 0x309e2c4e95f735204bfa44f933fe4e88accafff7 | FST Token 是流通货币 |
+| FSTTokenAgentHolder| 0xf5933a28ae9fcc5220dd7bd3375a8927d0f6212e | 持有人锁仓合约   |
 
 * 主链合约地址
 

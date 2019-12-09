@@ -485,6 +485,7 @@ contract FSTToken is ERC20Capped {
     }
 
 }
+
 contract Ownable {
     address private _owner;
 
@@ -553,9 +554,11 @@ contract Ownable {
         _owner = newOwner;
     }
 }
-contract FSTTokenAgentHolder is Ownable{
+contract FSTTokenTeamAgentHolder is Ownable{
 
     using SafeMath for uint256;
+
+    using SafeMath for uint8;
 
     FSTToken private token ;
 
@@ -564,7 +567,8 @@ contract FSTTokenAgentHolder is Ownable{
     uint256 public totalUNLockTokens;
     uint256 public globalLockPeriod;
 
-    uint256 public totalUnlockNum=4;
+    uint[] public stageRatios=[10,20,30,40];
+
     mapping (address => HolderSchedule) public holderList;
     address[] public holderAccountList=[0x0];
 
@@ -584,11 +588,11 @@ contract FSTTokenAgentHolder is Ownable{
         uint256 unlockNumed;
     }
 
-    constructor(address _tokenAddress ,uint256 _globalLockPeriod,uint256 _totalUnlockNum) public{
+    constructor(address _tokenAddress ,uint256 _globalLockPeriod,uint[] _stageRatios) public{
         token = FSTToken(_tokenAddress);
         globalLockPeriod=_globalLockPeriod;
-        totalUnlockNum=_totalUnlockNum;
-        singleNodeTime=globalLockPeriod.div(totalUnlockNum);
+        stageRatios=_stageRatios;
+        singleNodeTime=globalLockPeriod.div(stageRatios.length);
     }
 
     function addHolderToken(address _adr,uint256 _lockAmount) public onlyOwner {
@@ -636,59 +640,57 @@ contract FSTTokenAgentHolder is Ownable{
         require(_adr!=address(0));
         HolderSchedule storage holderSchedule = holderList[_adr];
         if(holderSchedule.isReleased==false&&holderSchedule.lockAmount>0){
-            uint256 unlockAmount=lockStrategy(_adr);
-            if(unlockAmount>0&&holderSchedule.lockAmount>=unlockAmount){
-                holderSchedule.lockAmount=holderSchedule.lockAmount.sub(unlockAmount);
-                holderSchedule.releasedAmount=holderSchedule.releasedAmount.add(unlockAmount);
-                holderSchedule.totalReleasedAmount=holderSchedule.totalReleasedAmount.add(unlockAmount);
-                holderSchedule.lastUnlocktime=block.timestamp;
-                if(holderSchedule.lockAmount==0){
-                    holderSchedule.isReleased=true;
-                    holderSchedule.releasedAmount=0;
-                    holderSchedule.unlockNumed=0;
-                }
-                accessToken(_adr,unlockAmount);
-                emit ReleaseTokens(_adr,unlockAmount);
-            }
-        }
-    }
-    function releaseEachTokens() public {
-        require(holderAccountList.length>0);
-        for(uint i=0;i<holderAccountList.length;i++){
-            HolderSchedule storage holderSchedule = holderList[holderAccountList[i]];
-            if(holderSchedule.lockAmount>0&&holderSchedule.isReleased==false){
-                uint256 unlockAmount=lockStrategy(holderAccountList[i]);
-                if(unlockAmount>0){
+            uint256 timestamp=block.timestamp;
+            uint256 unlockNum=hasUnlockNum(_adr,timestamp);
+            if(unlockNum>0){
+                uint256 unlockAmount=hasUnlockAmount(_adr,unlockNum);
+                if(unlockAmount>0&&holderSchedule.lockAmount>=unlockAmount){
                     holderSchedule.lockAmount=holderSchedule.lockAmount.sub(unlockAmount);
                     holderSchedule.releasedAmount=holderSchedule.releasedAmount.add(unlockAmount);
                     holderSchedule.totalReleasedAmount=holderSchedule.totalReleasedAmount.add(unlockAmount);
-                    holderSchedule.lastUnlocktime=block.timestamp;
+                    holderSchedule.lastUnlocktime=timestamp;
+                    holderSchedule.unlockNumed=unlockNum;
                     if(holderSchedule.lockAmount==0){
                         holderSchedule.isReleased=true;
                         holderSchedule.releasedAmount=0;
                         holderSchedule.unlockNumed=0;
                     }
-                    accessToken(holderAccountList[i],unlockAmount);
+                    accessToken(_adr,unlockAmount);
+                    emit ReleaseTokens(_adr,unlockAmount);
                 }
             }
         }
     }
-    function lockStrategy(address _adr) private returns(uint256){
+
+    function hasUnlockNum(address _adr,uint256 timestamp) public view returns(uint256){
         HolderSchedule storage holderSchedule = holderList[_adr];
-        uint256 interval=block.timestamp.sub(holderSchedule.startAt);
-        uint256 unlockAmount=0;
+        uint256 interval=timestamp.sub(holderSchedule.startAt);
+        uint256 unlockNum=0;
         if(interval>=singleNodeTime){
-            uint256 unlockNum=interval.div(singleNodeTime);
-            uint256 nextUnlockNum=unlockNum.sub(holderSchedule.unlockNumed);
-            if(nextUnlockNum>0){
-                holderSchedule.unlockNumed=unlockNum;
-                uint totalAmount=holderSchedule.lockAmount.add(holderSchedule.releasedAmount);
-                uint singleAmount=totalAmount.div(totalUnlockNum);
-                unlockAmount=singleAmount.mul(nextUnlockNum);
-                if(unlockAmount>holderSchedule.lockAmount){
-                    unlockAmount=holderSchedule.lockAmount;
-                }
+            unlockNum=interval.div(singleNodeTime);
+        }
+        if(unlockNum>stageRatios.length)
+        {
+            unlockNum=stageRatios.length;
+        }
+        return unlockNum;
+    }
+
+    function hasUnlockAmount(address _adr,uint256 unlockNum) public view returns(uint256){
+        HolderSchedule storage holderSchedule = holderList[_adr];
+        uint256 unlockAmount=0;
+        uint totalAmount=holderSchedule.lockAmount.add(holderSchedule.releasedAmount);
+        uint totalRatio=0;
+        if(unlockNum<=stageRatios.length){
+            for(uint i=0;i<unlockNum;i++){
+                totalRatio=totalRatio.add(stageRatios[i]);
             }
+        }
+        uint256 singleAmount=totalAmount.div(100);
+        uint256 unlockTotalAmount=singleAmount.mul(totalRatio);
+        unlockAmount=unlockTotalAmount.sub(holderSchedule.releasedAmount);
+        if(unlockAmount>holderSchedule.lockAmount){
+            unlockAmount=holderSchedule.lockAmount;
         }
         return unlockAmount;
     }
