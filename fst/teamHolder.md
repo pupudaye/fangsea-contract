@@ -43,5 +43,12 @@ FST 合约地址            锁仓周期  解仓阶段比例
 | FSTToken      | 0xC701BB3C623F6aB8E99b77815fA81b9A8ba862D2 | FST Token 是流通货币 |
 | FSTTokenTeamAgentHolder| 0x2C0363eF18E89Af3320e8B3918A2458658D23f82 | 团队持有人锁仓合约   |
 
+* STG合约地址-STG-FST
+
+|     Contract  |               Address                     |                Desc                     |
+|:-----------   |:------------------------------------------|:----------------------------------------|
+| FSTToken      | 0x4d2a45556aa5951c8dd6885e87ecc74c0462e33b | FST Token 是流通货币 |
+| FSTTokenTeamAgentHolder| 0x4c7B1689431b6F0bc313844041dc80570FAA80E9 | 团队持有人锁仓合约   |
+
 
 
